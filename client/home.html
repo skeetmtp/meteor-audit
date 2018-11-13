@@ -1,0 +1,210 @@
+<template name="home">
+
+  <div class="row">
+    <div class="col-12">
+
+    {{#if showpage}}
+
+      {{#if userLogged}}
+        {{> submitUrl}}
+        <br/>
+      {{/if}}
+      <br/>
+      
+      <div class="">
+
+      {{#each sliptReports}}
+        <div class="row">
+          {{#each row}}
+            {{> reportItem}}
+          {{/each}}
+        </div>
+      {{/each}}
+      
+      </div>
+    {{/if}}
+
+    </div>
+  </div>
+
+</template>
+
+
+<template name="submitUrl">
+  <div class="row">
+    <div class="col-12">
+      <div class="input-group">
+        <span class="input-group-addon">your site</span>
+        <input id="submitInput" type="url" class="form-control" placeholder="http://mysite.com/">
+        <span class="input-group-btn">
+          <button id="submitButton" class="btn btn-default" type="button">Submit</button>
+        </span>
+      </div>
+    </div>
+  </div>
+</template>
+
+<template name="reportItem">
+  <div class="col-md-4 col-sm-6 col-xs-12">
+    <div class="homeItemFrame panel panel-default">
+      <div class="homeItemInner panel-body">
+        {{#if isDone}}
+          {{#if receivedData}}
+            {{> validItem}}
+          {{else}}
+            {{> invalidItem}}
+          {{/if}}
+        {{else}}
+          {{> pendingItem}}
+        {{/if}}
+      </div>
+    </div>
+  </div>
+
+</template>
+
+<template name="pendingItem">
+  <div class="row">
+    <div class="col-12 text-center">
+      {{url}}
+    </div>
+  </div>
+
+  <div class="row topBuffer">
+    <div class="col-12 text-center homeItemIcon">
+      <span class="colorWarning glyphicon glyphicon-eye-close"></span>
+      Scan is pending...
+    </div>
+  </div>
+
+  {{> itemButtons}}
+
+</template>
+
+<template name="invalidItem">
+  <div class="row">
+    <div class="col-12 text-center">
+      <a class="noUnderline"  href="/reportError/{{_id}}">
+        {{url}}
+      </a>
+    </div>
+  </div>
+
+  {{> itemLastCheckDate}}
+
+
+  <div class="row topBuffer">
+    <div class="col-12 text-center homeItemIcon">
+      <span class="colorError glyphicon glyphicon-eye-close"></span>
+      Scan failed.
+    </div>
+  </div>
+
+  {{> itemButtons}}
+
+  <div class="row topBuffer">
+    <div class="col-12">
+      <a class="noUnderline" href="{{url}}">
+      <small class="colorGrey">site : {{url}}</small>
+      </a>
+    </div>
+  </div>
+
+
+</template>
+
+<template name="validItem">
+  <div>
+
+    <div class="row boldNoUnderline">
+      <div class="col-12 text-center">
+        <a class="noUnderline"  href="/report/{{_id}}">
+          {{rawData.title}}
+        </a>
+      </div>
+    </div>
+
+    {{> itemLastCheckDate}}
+
+    <a class="noUnderline" href="/report/{{_id}}">
+      <div class="row noLinkText topBuffer">
+        <div class="col-12">
+          <div class="media">
+            <div class="pull-left topBuffer">
+                  {{#if true}}
+                    <img class="homeItem" src="data:image/jpeg;base64,{{getScreenshotBase64}}"/>
+                  {{else}}
+                    <img class="homeItem" src="localhost"/>
+                  {{/if}}
+            </div>
+            <div class="media-body homeItemIcon">
+              <div data-toggle="tooltip" data-placement="left" title="{{errorCountToolTip}}">
+              {{#if report.errorCount}}
+                  <span class="colorDanger glyphicon glyphicon-fire"></span>
+                  {{report.errorCount}}<br/>
+              {{else}}
+                <span class="colorSucess glyphicon glyphicon-ok-sign"></span>
+                <br/>
+              {{/if}}
+              </div>
+              <div data-toggle="tooltip" data-placement="left" title="meteor version {{data.report.meteor.version}}">
+                {{rawData.meteor.version}}
+              </div>
+              <div data-toggle="tooltip" data-placement="left" title="startup duration">
+                {{rawData.startup.durationMs}} Ms
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </a>
+
+    {{> itemButtons}}
+
+    <div class="row topBuffer">
+      <div class="col-12">
+        <a class="noUnderline" href="{{url}}">
+        <small class="colorGrey">site : {{url}}</small>
+        </a>
+      </div>
+    </div>
+
+  </div>
+</template>
+
+
+<template name="itemButtons">
+    <div class="row noLinkText topBuffer">
+      <div class="col-12">
+        <div class="btn-group">
+          {{#each buttons}}
+            <button id={{id}} type="button" class="btn btn-default">{{text}}</button>
+          {{/each}}
+        </div>
+      </div>
+    </div>
+    <div class="row noLinkText topBuffer">
+      <div class="input-group">
+        <span class="input-group-addon">login token</span>
+        <input id="loginTokenInput" type="text" class="form-control" placeholder="">
+        <span class="input-group-btn">
+          <button id="loginTokenButton" class="btn btn-default" type="button">Update</button>
+        </span>
+      </div>
+      <a class="help-block"  href="/help/logintoken">how to get login token ?</a>
+    </div>
+</template>
+
+
+<template name="itemLastCheckDate">
+  <div class="row noLinkText topBuffer">
+    <div class="col-12 homeItemDate">
+      {{lastCheckDate}}<br/>
+      {{#if withLoginToken}}
+        Logged with user id '{{rawData.user._id}}'
+      {{else}}
+        Not logged
+      {{/if}}
+    </div>
+  </div>
+</template>

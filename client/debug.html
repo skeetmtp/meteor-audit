@@ -1,0 +1,74 @@
+<template name="debug">
+  <br/>
+  
+  <ul>
+  {{#each this}}
+    {{> debugItem}}
+  {{/each}}
+  </ul>
+
+  <ul>
+  {{#each getUsers}}
+    {{> debugUser}}
+  {{/each}}
+  </ul>
+  
+  <br/>
+  <br/>
+
+  url : <input id="url" type="url" value="" /><br/>
+  login token : <input id="loginToken" type="text" value="" /> try in console : <code>localStorage.getItem("Meteor.loginToken");</code> <br/>
+  <input id="submitButton" type="button" value="submit" /><br/>
+  <br/>
+  <br/>
+  
+  {{#if false}}
+    <input id="testCreateButton" type="button" value="test create" /><br/>
+    <input id="testStartButton" type="button" value="test start" /><br/>
+  {{/if}}
+</template>
+
+<template name="debugUser">
+  <li>
+    <a class="" href="/debug/{{_id}}">
+    {{userName}}
+    </a>
+  </li>
+</template>
+
+<template name="debugItem">
+  <li>
+    <input id="refreshButton" type="button" value="refresh" /> 
+    {{#if isDeleted}}
+      <input id="undeleteButton" type="button" value="undelete" />
+    {{else}}
+      <input id="deleteButton" type="button" value="delete" />
+    {{/if}}
+    
+    {{#if isDemo}}
+      <input id="unsetDemoButton" type="button" value="unset demo" />
+    {{else}}
+      <input id="setDemoButton" type="button" value="set demo" />
+    {{/if}}
+    
+    {{#if isPublic}}
+      <input id="unsetPublicButton" type="button" value="unset public" />
+    {{else}}
+      <input id="setPublicButton" type="button" value="set public" />
+    {{/if}}
+    
+    {{#if isDataOk}}
+      <input id="goButton" type="button" value="go" />
+    {{else}}
+      <input id="debugButton" type="button" value="debug" />
+    {{/if}}
+    
+    <a class="" href="/debug/{{createdBy}}">
+      {{userName}} 
+    </a>
+    <a class="" href="{{url}}">
+    {{url}}
+    </a> : {{getLastScanDate}} {{status}}/{{dataStatus}} lt={{loginToken}} id={{_id}}
+    <!-- <a href="/report/{{_id}}">{{url}} : {{status}} ...</a> -->
+  </li>
+</template>

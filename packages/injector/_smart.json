@@ -1,0 +1,9 @@
+{
+  "name": "injector",
+  "description": "Inject script into a site through panthomjs",
+  "homepage": "",
+  "author": "skeetmtp",
+  "version": "0.1.0",
+  "git": "https://github.com/foobar.git",
+  "packages": {}
+}

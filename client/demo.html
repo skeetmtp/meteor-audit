@@ -1,0 +1,31 @@
+<template name="demoLayout">
+  <div class="layoutBackground"></div>
+
+  <div class="text-center">
+    <a class="noLinkText" href="/">
+      <h1> 
+        Audit<br/>
+        <small>Your Meteor site analyzed</small>
+      </h1>
+    </a>
+  </div>
+  
+  <br/>
+  <br/>
+  
+
+  <div class="container">
+    {{#if showPleaseWait}}
+      {{> pleaseWait}}
+    {{else}}
+      {{> yield}}
+    {{/if}}
+  </div>
+  
+  {{> footer}}
+</template>
+
+
+<template name="demo">
+  {{> report}}
+</template>

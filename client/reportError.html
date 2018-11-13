@@ -1,0 +1,29 @@
+
+<template name="reportError">
+  {{> reportErrorLogs}}
+</template>
+
+<template name="reportErrorLogs">
+  <br/>
+  {{#if true}}
+    <div class="row col-md-12">
+      stdout :<br/>
+      {{#each split logs.stdout}}
+        {{item}}<br/>
+      {{/each}}
+    </div>
+    <div class="row col-md-12">
+      error :<br/>
+      {{#with split logs.error}}
+        {{item}}<br/>
+      {{/with}}
+    </div>
+    <div class="row col-md-12">
+      stderr :<br/>
+      {{#with split logs.stderr}}
+        {{item}}<br/>
+      {{/with}}
+    </div>
+  {{/if}}
+</template>
+

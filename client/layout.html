@@ -1,0 +1,67 @@
+<template name="layout">
+  {{#if isLogged}}
+    {{> logout}}
+  {{/if}}
+
+  {{#if isInDevelopment}}
+    <div class="grey">
+      {{> loginButtons}}
+    </div>
+  {{else}}
+    <div class="layoutBackground"></div>
+
+    <div class="text-center">
+      <a class="noLinkText" href="/">
+        <h1> 
+          Audit<br/>
+          <small>Your Meteor site analyzed</small>
+        </h1>
+      </a>
+    </div>
+  {{/if}}
+
+  
+  <br/>
+  <br/>
+  
+
+  <div class="container">
+    {{#if showPleaseWait}}
+      {{> pleaseWait}}
+    {{else}}
+      {{#if isLogged}}
+        {{> yield}}
+      {{else}}
+        {{> login}}
+      {{/if}}
+    {{/if}}
+  </div>
+  
+  {{> footer}}
+</template>
+
+
+<template name="footer">
+  <div class="footer"></div>
+</template>
+
+<template name="pleaseWait">
+  <div class="text-center">
+    <div class="jumbotron">
+      <p>Please wait...</p>
+    </div>
+  </div>
+</template>
+
+<template name="login">
+  <div class="text-center">
+    <div class="jumbotron">
+      <p><a id="loginButton" class="btn btn-primary btn-lg" role="button">Login with Meteor</a></p>
+      <p><a id="demoButton" class="btn btn-primary btn-lg" role="button" href="/demo">Demo</a></p>
+    </div>
+  </div>
+</template>
+
+<template name="logout">
+ <a id="logoutButton" class="btn btn-primary btn-xs" role="button">logout...</a>
+</template>

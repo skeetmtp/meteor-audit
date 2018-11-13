@@ -1,0 +1,292 @@
+
+<template name="report">
+  {{#if url}}
+      {{#if isRequested}}
+        {{> reportRequested}}
+      {{else}}
+        <div class="bluredBackground" style="background-image: url(data:image/jpeg;base64,{{getScreenshotBase64}})"></div>
+        {{#if isDone}}
+          {{> reportResult}}
+        {{else}}
+          {{> reportPending}}
+        {{/if}}
+      {{/if}}
+  {{else}}
+    {{> reportNone}}    
+  {{/if}}
+</template>
+
+<template name="reportNone">
+  <div class="row">
+    <h4>
+    No data...
+    </h4>
+  </div>
+</template>
+
+<template name="reportPending">
+  <div class="row">
+    <h4>
+    Computing report ....
+    </h4>
+  </div>
+</template>
+
+<template name="reportResult">
+  <div class="row">
+    <div class="panel panel-default">
+      <div class="panel-heading">Report ({{lastCheckDate}}) for <b><a class="nounderline" href="{{url}}">{{url}}</a></b>
+        <div class="btn-group">
+          <button id="refreshButton" type="button" class="btn btn-default">Refresh</button>
+        </div>
+      </div>
+      <div class="panel-body">
+
+        {{#with checkVersion rawData}}
+          {{> reportValue}}
+        {{/with}}
+
+        {{#with checkInsecure rawData}}
+          {{> reportValue}}
+        {{/with}}
+
+        {{#with checkAutopublish rawData}}
+          {{> reportValue}}
+        {{/with}}
+
+        <!--
+        {{#with checkAuditArgumentCheck rawData}}
+          {{> reportValue}}
+        {{/with}}
+        -->
+
+        {{#with checkXss rawData}}
+          {{> reportValue}}
+        {{/with}}
+
+        {{#with checkUsers rawData}}
+          {{> reportCollection}}
+        {{/with}}
+
+        {{#if rawData.ironRouter}}
+          {{#with rawData.ironRouter}}
+            {{> reportIronRouter}}
+          {{/with}}
+        {{/if}}
+
+        {{#with listArray rawData.session}}
+          {{> reportObject}}
+        {{/with}}
+
+        {{#if rawData.templates}}
+          {{#with rawData.templates}}
+            {{> reportTemplate}}
+          {{/with}}
+        {{/if}}
+
+        {{#with listArray rawData.packages}}
+          {{> reportCollection}}
+        {{/with}}
+
+        {{#with listArray rawData.oauth}}
+          {{> reportCollection}}
+        {{/with}}
+
+        {{#with checkStartup rawData}}
+          {{> reportValue}}
+        {{/with}}
+
+        {{> reportSubCategory title='Global collections :'}}
+        {{#each rawData.collections.globals}}
+          {{#with collectionGeneric}}
+            {{> reportCollection}}
+          {{/with}}
+        {{/each}}
+
+        {{#if rawData.collections.privates.length}}
+          {{> reportSubCategory title='Other collections :'}}
+          {{#each rawData.collections.privates}}
+            {{#with collectionGeneric}}
+              {{> reportCollection}}
+            {{/with}}
+          {{/each}}
+        {{/if}}
+
+        {{> reportLogs}}
+
+      </div>
+
+    </div>
+  </div>
+</template>
+
+<template name="reportRequested">
+  <div class="row">
+    <div class="panel panel-default">
+      <div class="panel-heading"><b><a class="nounderline" href="{{url}}">{{url}}</a></b> report is pending...</div>
+ 
+      <div class="panel-body text-center">
+        <br/>
+        <br/>
+        <br/>
+        Your request is pending... <br/>
+        <br/>
+        You'll receive an email when this report will be available.<br/>
+        <br/>
+        <br/>
+        <br/>
+        <br/>
+        <br/>
+
+      </div>
+
+    </div>
+
+  </div>
+</template>
+
+<template name="reportIronRouter">
+  <div class="">
+    <table><tr>
+      <td style="width:70px"><span class="label label-info">info</span></td>
+      <td><a class="nounderline" data-toggle="collapse" data-target="#reportIronRouter" href="#">IronRouter ({{routeCount}})</a></td>
+    </tr></table>
+  </div>
+  <div id="reportIronRouter" class="collapse col-md-12">
+    <ul> 
+    {{#each routes}}
+      <li>
+        {{name}} ( {{options.path}} )
+        {{#if routeHasOptions}}
+        <ul>
+          <li>data : <code>{{options.data}}</code></li>
+          <li>waitOn : <code>{{options.waitOn}}</code></li>
+        </ul>
+        {{/if}}
+      </li>
+    {{/each}}
+    </ul>
+  </div>
+</template>
+
+<template name="reportCollection">
+  <div class="">
+    <table><tr>
+      <td style="width:70px"><span class="label label-{{status}}">{{label}}</span></td>
+      <td><a class="nounderline" data-toggle="collapse" data-target="#{{id}}" href="#">{{title}}</a></td>
+    </tr></table>
+  </div>
+  <div id="{{id}}" class="collapse col-md-12">
+    {{> formatSolution}}
+    <ul> 
+    {{#each getSamples}}
+      <li><code>{{stringify item}}</code></li>
+    {{/each}}
+    </ul>
+  </div>
+</template>
+
+<template name="reportObject">
+  <div class="">
+    <table><tr>
+      <td style="width:70px"><span class="label label-{{status}}">{{label}}</span></td>
+      <td><a class="nounderline" data-toggle="collapse" data-target="#{{id}}" href="#">{{title}}</a></td>
+    </tr></table>
+  </div>
+  <div id="{{id}}" class="collapse col-md-12">
+    {{> formatSolution}}
+    <ul> 
+    {{#each getSamples}}
+      <li>{{index}} : <code>{{stringify item}}</code></li>
+    {{/each}}
+    </ul>
+  </div>
+</template>
+
+<template name="reportTemplate">
+  <div class="">
+    <table><tr>
+      <td style="width:70px"><span class="label label-info">info</span></td>
+      <td><a class="nounderline" data-toggle="collapse" data-target="#reportTemplate" href="#">Template ({{getCount}})</a></td>
+    </tr></table>
+  </div>
+  <div id="reportTemplate" class="collapse col-md-12">
+    <ul> 
+    {{#each this}}
+      <li>
+        {{name}}
+        <ul> 
+          <li>
+            Helpers
+            <ul>
+        {{#each getHelpers}}
+          <li>{{name}} : <code>{{value}}</code></li>
+        {{/each}}
+            </ul>
+          </li>
+          <li>
+            Events
+            <ul>
+        {{#each getEvents}}
+          <li>{{name}} on {{selector}} : <code>{{handler}}</code></li>
+        {{/each}}
+            </ul>
+          </li>
+        </ul>
+      </li>
+    {{/each}}
+    </ul>
+  </div>
+</template>
+
+<template name="reportValue">
+  <div class="">
+    <table><tr>
+      <td style="width:70px"><span class="label label-{{status}}">{{label}}</span></td>
+      <td><a class="nounderline" data-toggle="collapse" data-target="#{{id}}" href="#">{{title}}</a></td>
+    </tr></table>
+  </div>
+  <div id="{{id}}" class="row collapse col-md-12">
+    {{> formatSolution}}
+  </div>
+</template>
+
+<template name="reportLogs">
+  <br/>
+  {{#if false}}
+    <div class="row col-md-12">
+      stdout :<br/>
+      {{#each split logs.stdout}}
+        {{item}}<br/>
+      {{/each}}
+    </div>
+    <div class="row col-md-12">
+      error :<br/>
+      {{#with split logs.error}}
+        {{item}}<br/>
+      {{/with}}
+    </div>
+    <div class="row col-md-12">
+      stderr :<br/>
+      {{#with split logs.stderr}}
+        {{item}}<br/>
+      {{/with}}
+    </div>
+  {{/if}}
+</template>
+
+<template name="reportSubCategory">
+  <br/>
+  <div class="row col-md-12">
+    {{title}}
+  </div>
+</template>
+
+<template name="formatSolution">
+  {{#if link}}
+      <a class="nounderline"  href="{{link}}">{{comment}}</a>
+  {{else}}
+      {{comment}}
+  {{/if}}
+</template>
+
